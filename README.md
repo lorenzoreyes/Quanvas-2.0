@@ -1,4 +1,5 @@
-# QUANVAS a CRUD approach to do PORTFOLIO MANAGEMENT
+# QUANVAS 
+a CRUD approach to do PORTFOLIO MANAGEMENT
 *** 10 markets targeted, but BINANCE is deployed.
 
 ### This project is FOSS && I share my philosophy 
