@@ -1,0 +1,32 @@
+.
+├── ATM.py {ATM machine to read, update rebalance/change amount/ risk of clients iteratetively}
+├── bienvenido.py {template spanish welcome.py reads NewOnes as first time clients}
+├── clients.py
+├── controlpanel.py {endpoints of binance}
+├── credentials.py {gmail account name+password to sent emails}
+├── DATABASE/ {2 Stage Folder - DATABASE of clients to keep informed daily}
+│   ├── {Market} {Name} {email} {amount} {Risk Profile | Optimization} {Date last change}.xlsx
+├── doctorPerformance.py {ATM but runs the portfolio and compares result vs other optimizations}
+├── fakeClients.py {generator of fake clients to test the 
+├── apiBinance.py {api credentials for Binance}
+├── macro.py {reads an excel and use it as input to generate n portfolios}
+├── maintainer_perform.py {with a simple loop iterate excels to record operations}
+├── maintainer_report.py
+├── maintainer_todo.py {record input to be use for maintainer_perform.py}
+├── micro.py {enter by hand inputs to generate a portolio}
+├── NewOnes/ {1 First stage -  once the client init investment here will be the first step}
+├── Oldportfolios/ {4 Stage - old history of clients, although emails themselves serves as records} 
+├── owly.py {just binance bot to have an idea of what is it like to run a bot}
+├── register_clients.py {input for macro.py new_clients.xlsx excel to iterate portfolio generation}
+├── requirements.txt {list of pip packages}
+├── resume.py {daily brief to inform performance of portofolios to clients}
+├── scanner.py {reads the database and returns proper info to iterate}
+├── scrap.py {scrapper of market data, returns a list of all data relevant to run the portfolios}
+├── template.html {output of email scripts welcome.py to check format of info sent}
+├── templateReport.py {main html+css inputs as python strings to serve as template for emails}
+├── trackATM.py {ATM functions to read, update, change and returns back to basics format portfolios}
+├── update.py {client brief launch via crontab each 5:05pm}
+|-- Update/ {3 Stage - if a client perform a change it goes here in order to inform the operation}
+└── welcome.py {welcome email clients of NewOnes folder move to DATABASE}
+
+4 directories, 33 files
