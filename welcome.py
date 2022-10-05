@@ -1,16 +1,4 @@
-import pandas as pd, datetime as dt, numpy as np
-import smtplib, re, os, ssl 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-import trackATM as tracker
-from templateReport import * # template html of all content of the email
-#from scanner import *
-import yfinance as yahoo 
+from packages import *
 
 file = []
 
@@ -67,21 +55,21 @@ for i in range(len(file)):
   investment = '${:,.2f}'.format(investment).replace('.','p').replace(',','.').replace('p',',')
   capital = '${:,.2f}'.format(capital).replace('.','p').replace(',','.').replace('p',',')
   liquidity = '${:,.2f}'.format(liquidity).replace('.','p').replace(',','.').replace('p',',')
-  
+
   portfolio = portfolio.rename(columns={'nominal':'Nominal','invested':'Invested','percentage':'Weight'})
   cliente = excel.Path[i].split()[1] + ' ' + excel.Path[i].split()[2]
   email = excel.Path[i].split()[3]
-  
+
   text = f"""<h1>Welcome {cliente} to QUANVAS.</h1><br /><h3>At the current date {today} we had generated a portfolio recommendation based on your risk profile.<br /></h3>"""
   details = f"""<h3>Portfolio aspects:
               <ul>
                 <li>Amount to invest: {capital}.</li>
                 <li>Risk Profile: {risk}.</li>
-                <li>Risk vary from 1 to 4, from more conservative to more agressive..</li>
+                <li>Risk vary from 1 to 4, from more conservative to more agressive..Monte_VaR, Monte_Sharpe, MinVaR, Sharpe</li>
                 <li>Effectively invested: {investment}.</li>
                 <li>Liquidity remained to invest: {liquidity}.</li>
               </ul></h3> """
-              
+
   html_close = portfolio.to_html(na_rep = "").replace('<table','<table id="effect" style="width:70%; height:auto;"').replace('<th>','<th style = "background-color: rgb(60,179,113); color:black">')
 
   warning = """<h3>Actions to consider:<br/>
@@ -90,7 +78,7 @@ for i in range(len(file)):
                     <li>Change amount invested by withdraw or deposit.</li>
                     <li>Reset risk level.</li>
                 </ul></h3>"""
-  warning += """<h3>Factors to keep an eye on:<br /> 
+  warning += """<h3>Factors to keep an eye on:<br />
             <p>Market Tendency. Considering technichal anaylis, fundamental view or a certain event..<br />Liquidity needs.</p>
         </ul></h3>"""
   signature = '<p>We hope this brief keep you updated.<br /></p><p>Without nothing more, welcome QUANVAS.</p>'
@@ -101,7 +89,7 @@ for i in range(len(file)):
 
   # In order to save & test the actual template we are sending
   if i == 0:
-      e = open(f'template.html','w') 
+      e = open(f'template.html','w')
       e.write(html_file)
       e.close()
 
@@ -111,12 +99,12 @@ for i in range(len(file)):
       msg['Subject'] = f"Welcome to QUANVAS {cliente} {today}"
       msg['From'] = credentials.account
       msg['To'] = ",".join(recipients)
-      # Large Excel 
+      # Large Excel
       fp = open(f'{excel.Path.values[i]}', 'rb')
       parte = MIMEBase('application','vnd.ms-excel')
       parte.set_payload(fp.read())
       encoders.encode_base64(parte)
-      parte.add_header('Content-Disposition', 'attachment', filename=f'Resumen Cuenta {cliente}.xlsx')
+      parte.add_header('Content-Disposition', 'attachment', filename=f'Account Rec {cliente}.xlsx')
       msg.attach(parte)
       part1 = html_file
       part1 = MIMEText(part1, 'html')

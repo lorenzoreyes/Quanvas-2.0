@@ -1,10 +1,5 @@
-import pyRofex, os
-import urllib.request
-import pandas as pd
-import datetime as dt 
-import yfinance as yahoo
-import matplotlib.pyplot as plt 
-from pylab import mpl
+from packages import *
+from packages import *
 mpl.rcParams['font.family'] = 'serif'
 plt.style.use('fivethirtyeight')
 

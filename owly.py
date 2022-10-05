@@ -1,16 +1,10 @@
+from packages import *
 '''
 An easy tren-following Binance BOT
 ONLY run it if you want to have the experience
 
 
 '''
-from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
-import pandas as pd, yfinance as yahoo
-import numpy as np, datetime as dt
-import matplotlib.pyplot as plt
-from pylab import mpl
-from controlpanel import *
-from apiBinance import *
 mpl.rcParams['font.family'] = 'serif'
 plt.style.use('fivethirtyeight')
 pd.options.display.width = 0

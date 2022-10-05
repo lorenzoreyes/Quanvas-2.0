@@ -1,3 +1,4 @@
+from packages import *
 ''' 
 A tiny program to enter input to scanner.xlsx
 Status and Change columns
@@ -7,7 +8,6 @@ in order to leave it for maintainer_perform.py script
 end result = excel as input to be trigger
 '''
 
-import pandas as pd
 
 pd.options.display.float_format = '{:,.2f}'.format
 

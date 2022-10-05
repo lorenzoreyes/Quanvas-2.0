@@ -1,15 +1,5 @@
-import pandas as pd, datetime as dt, numpy as np
-import smtplib, re, os, ssl 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-import trackATM as tracker
-from templateReport import * # template html of all content of the email
-import yfinance as yahoo 
+from packages import *
+from packages import *
 
 file = []
 
@@ -72,7 +62,7 @@ for i in range(len(clients)):
   portfolio['notionalRebalance'] = sum(portfolio['nominalNew'] * portfolio['priceToday'])
   portfolio['liquidityToReinvest'] =  (portfolio['notionalToday'] + portfolio['oldLiquidity']) - portfolio['notionalRebalance']
   cliente = str(clients.Name.values[i])
-  portfolio.to_excel(f'{cliente} Update {today}.excel')
+  portfolio.to_excel(f'{cliente} Update {today}.xlsx')
   portfolio.index = portfolio.index.to_list()  
   pnl = portfolio.PnLpercent.values[0].copy()
   portfolio = portfolio[portfolio.nominal!=0.0].dropna()
@@ -140,7 +130,7 @@ for i in range(len(clients)):
       msg['From'] = credentials.account
       msg['To'] = ",".join(recipients)
       # Large Excel 
-      fp = open(f'{cliente} Update {today}.excel', 'rb')
+      fp = open(f'{cliente} Update {today}.xlsx', 'rb')
       parte = MIMEBase('application','vnd.ms-excel')
       parte.set_payload(fp.read())
       encoders.encode_base64(parte)
@@ -158,7 +148,7 @@ for i in range(len(clients)):
 
 
   e = sendEmail(html_file)
-  os.remove(f'{cliente} Update {today}.excel')
+  os.remove(f'{cliente} Update {today}.xlsx')
   print(f"{dt.datetime.now().strftime('%H:%M:%S:%f')} Portfolio to {cliente} {file_path} SENT!!!")
   e
 

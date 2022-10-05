@@ -1,3 +1,4 @@
+from packages import *
 '''
 We read the status of scanner.xlsx in order to know what operation 
 we have to do to each client
@@ -17,18 +18,6 @@ Update/{Operation} {Capital old} ..rest as convention was
 '''
 
 
-import pandas as pd, datetime as dt, numpy as np
-import smtplib, re, os 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-import trackATM as tracker
-from templateReport import * # template html of all content of the email
-import yfinance as yahoo 
 
 clients = pd.read_excel('/.scanner.xlsx')
 clients = clients[clients.Status!=0]

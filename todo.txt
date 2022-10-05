@@ -1,0 +1,4 @@
+Move optimizers from micro.py and macro.py to a new script
+
+config it to call scrap and return a dataframe with all weights of all optimizations
+for the portfolio

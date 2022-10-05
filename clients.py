@@ -1,7 +1,4 @@
-import pandas as pd, numpy as np 
-import datetime as dt
-import random
-from faker import Faker
+from packages import *
 fake = Faker()
 
 number = int(input('Number of fake clients to backtest?\t\t\n\n'))
@@ -28,8 +25,8 @@ for _ in range(len(clients)):
 
 clients['Money'] = money
 
-#str(input("Choose Optimization\n1 SharpeRatio\n2 SortinoRatio\n3 SharpeUnbound\n4 MinVaR\nOther option is the winner\nMake your choice: "))
-risks = ['SharpeRatio','SortinoRatio','SharpeUnbound','MinVaR']    
+#str(input("Choose Optimization\n1 SharpeRatio\n2 MonteVaR\n3 Monte_Sharpe\n4 MinVaR\nOther option is the winner\nMake your choice: "))
+risks = ['SharpeRatio','MonteVaR','Monte_Sharpe','MinVaR']    
 
 optimization = []
 for _ in range(len(clients)):

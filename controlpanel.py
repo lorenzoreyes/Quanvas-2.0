@@ -1,3 +1,4 @@
+from packages import *
 '''
 Landscape functions to
 read holding, market, trending data
@@ -11,10 +12,6 @@ res = {test_keys[i]: test_values[i] for i in range(len(test_keys))}
 {direction.symbol.values[i]: round(direction.lastPrice.values[i],1) for i in range(len(direction))}
 
 '''
-from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
-import pandas as pd, yfinance as yahoo
-import datetime as dt
-from apiBinance import *
 
 client = Client(API_KEY,API_SECRET)
 

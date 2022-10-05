@@ -1,9 +1,4 @@
-from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
-import yfinance as yahoo 
-import pandas as pd, numpy as np
-import ssl
-import urllib.request
-from apiBinance import *
+from packages import *
 
 client = Client(API_KEY,API_SECRET)
 
@@ -16,7 +11,6 @@ except AttributeError:
 else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
-    #from pytickersymbols import PyTickerSymbols #https://pypi.org/project/pytickersymbols/
 
 
 ''' functions to get info about each market and their current stock tickets
@@ -24,7 +18,7 @@ else:
  the handlers will result with a list of metrics that will be use by main script
  to build respective portfolio
 
- Steps 
+ Steps
  (1) call an endpoint to gather all proper tickers of that market
  (2) download the data
  (3) generate all the metrics
@@ -44,7 +38,7 @@ def metrics(lista):
     std = pd.DataFrame(pct.std(),columns=['Std'],index=pct.columns)
     sharpe_ratio = pd.DataFrame(mean_rf['Mean']/(std['Std']), columns=['SharpeRatio'],index=pct.columns)
     orderedsharpe = sharpe_ratio.sort_values('SharpeRatio', axis=0, ascending=False)
-    lista = list(orderedsharpe.head(50).index.values)
+    lista = list(orderedsharpe.head(30).index.values)
     df = yahoo.download(lista,period="1y",interval="60m")["Adj Close"].fillna(method="ffill")
     riskfree = df.T.mean().fillna(method='ffill')
     pct = df.pct_change().dropna() #(how='all')
@@ -60,10 +54,10 @@ def metrics(lista):
     observations = len(df.index)
     mean_returns = df.pct_change().mean()
     cov = df.pct_change().cov()
-    alpha = 0.1
+    alpha = 0.05
     rf = riskpct.mean()
-    num_portfolios = 1000
-    Upbound = 0.15
+    num_portfolios = 10000
+    Upbound = 0.125
     result = [df,riskfree,pct,riskpct,mean,mean_rf,std,numerator,downside_risk,noa,weigths\
         ,observations,mean_returns,cov,alpha,rf,num_portfolios,Upbound]
     return result
@@ -74,7 +68,7 @@ def GSPC():
     freeRisk = '^GSPC'
     result = metrics(lista)
     return result
-    
+
 
 def Cedears():
     comafi = pd.read_html('https://www.comafi.com.ar/2254-CEDEAR-SHARES.note.aspx')[0]
@@ -90,8 +84,8 @@ def Cedears():
     percentage = volume.div(votal['totav'], axis=0)
     ordered = pd.DataFrame(percentage.sum().T,columns=['percentage'],index=percentage.columns)
     ordered = ordered / ordered.sum() # ensure you round to 100%
-    orderedalph = ordered.sort_values('percentage',axis=0,ascending=False)    
-    liquid = orderedalph.cumsum()    
+    orderedalph = ordered.sort_values('percentage',axis=0,ascending=False)
+    liquid = orderedalph.cumsum()
     listado = list(liquid.head(50).index.values)
     listado = [i.replace('.BA','') for i in listado]
     lista = []
@@ -148,7 +142,7 @@ def binance():
     x = pd.DataFrame(client.get_ticker())
     y =  x[x.symbol.str.contains('USDT')]
     z = y[~(y.symbol.str.contains('BULL')) & ~(y.symbol.str.contains('BEAR'))]
-    z = z[~(z.symbol.str.contains('UP')) & ~(z.symbol.str.contains('DOWN'))]
+    z = z[~(z.symbol.str.contains('UP'))] # & ~(z.symbol.str.contains('DOWN'))]
     z = z[z.symbol.apply(lambda x: ('USDT' in x[-4:]))]
     z = z[z.lastPrice.astype(float)!=0]
     final = z[['symbol','lastPrice']]

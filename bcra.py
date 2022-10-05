@@ -1,10 +1,4 @@
-import urllib.request
-import pandas as pd
-import datetime as dt 
-import yfinance as yahoo
-import matplotlib.pyplot as plt 
-from pylab import mpl
-import os
+from packages import *
 mpl.rcParams['font.family'] = 'serif'
 plt.style.use('fivethirtyeight')
 
@@ -19,7 +13,6 @@ depositos = pd.read_excel('seriese.xlsx', sheet_name='DEPOSITOS')
 prestamos = pd.read_excel('seriese.xlsx', sheet_name='PRESTAMOS')
 tasas = pd.read_excel('seriese.xlsx', sheet_name='TASAS DE MERCADO')
 instrumentos = pd.read_excel('seriese.xlsx', sheet_name='INSTRUMENTOS DEL BCRA')
-#notas = pd.read_excel(u[0], sheet_name='NOTAS')import urllib.request
 
 basem = basem.loc[8:]
 basem.index = basem['C60']

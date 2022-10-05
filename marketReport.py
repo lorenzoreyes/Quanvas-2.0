@@ -1,17 +1,6 @@
-import pandas as pd, datetime as dt
-import smtplib, re, os 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-from templateReport import *
-from scanner import *
+from packages import *
 
 ### FROM THIS SCRIPT WE GATHER ALL DATA FOR THE REPORT
-#from argentinafx import *
 
 date = today = dt.date.today().strftime('%Y-%m-%d')
 

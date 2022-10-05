@@ -1,17 +1,5 @@
-import pandas as pd, datetime as dt, numpy as np
-import smtplib, re, os, ssl 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-import trackATM as tracker
-from templateReport import * # template html of all content of the email
-from scanner import *
-import yfinance as yahoo 
-
+from packages import *
+from packages import *
 file = []
 
 for filename in glob.iglob('./NewOnes/*'):
@@ -79,7 +67,7 @@ for i in range(len(file)):
               <ul>
                 <li>Monto de Inversión: {capital}.</li>
                 <li>Perfil de Riesgo: {risk}.</li>
-                <li>Riesgos de 1 a 4 de Conservador a más Agresivo (MinVar, Sharpe, Sortino, SharpeUnbound).</li>
+                <li>Riesgos de 1 a 4 de Conservador a más Agresivo (MinVar, Sharpe, Monte_VaR, Monte_Sharpe).</li>
                 <li>INVERTIDO: {investment}.</li>
                 <li>Liquidez remanente para reinvertir: {liquidity}.</li>
               </ul></h3> """

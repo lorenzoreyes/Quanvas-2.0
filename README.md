@@ -1,5 +1,4 @@
-# QUANVAS 
-a CRUD approach to do PORTFOLIO MANAGEMENT
+# QUANVAS a CRUD approach to do PORTFOLIO MANAGEMENT
 *** 10 markets targeted, but BINANCE is deployed.
 
 ### This project is FOSS && I share my philosophy 
@@ -26,7 +25,7 @@ Risk-Profiles From conservative to Agressive Sharpe Ratio to Min VaR
 ```bash
 python micro.py # enter input of each portfolio by hand
 
-python macro.py # reads  new_clients.xlsx as inputs
+python fakeClients.py &&macro.py # reads  new_clients.xlsx as inputs
 ```
 ## 2-Notify Portolio Creation & its daily performance 
 ```bash

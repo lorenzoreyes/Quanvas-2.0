@@ -1,9 +1,7 @@
+from packages import *
 # This file covers the cycle of portolio management tasks
 # with the purpose of being executed in the Console
-
-import yfinance as yahoo
-import pandas as pd
-import numpy as np
+from packages import *
 
 """4 main functions to handle the cycle of portfolio management from the clients.xlsx inputs
   0 Do nothing.

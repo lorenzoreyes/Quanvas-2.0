@@ -1,8 +1,7 @@
+from packages import *
 # needed fields to fill a form of a new client as a dict
 # fields = Names	Emails	Money	Markets	(=>Symbol)	risk (=>Optimization)
 # Symbol is giben by the Market, and Optimization by risk too
-import pandas as pd
-import datetime as dt
 
 print("Register Clients to generate portfolios according their specs\n\n\n".center(60,'+'))
 client_form = {'Names':[],'Emails':[],'Markets':[],'Symbol':[],'Money':[],'Risk':[]}
@@ -18,8 +17,8 @@ def register_client():
     client_form['Markets'].append(int(mercado)-1)
     client_form['Symbol'].append(markets[f"{mercado}"])
     client_form['Money'].append(input('How much to invest?\n\n\t\t'))                             
-    risk = (input('(1) MinVar,\n(2) SharpeRatio,\n(3) SortinoRatio,\n(4) SharpeUnbound\n\n\t\t'))
-    client_form['Risk'].append(risk.replace('1','MinVaR').replace('2','SharpeRatio').replace('3','SortinoRatio').replace('4','SharpeBound'))
+    risk = (input('(1) MinVar,\n(2) SharpeRatio,\n(3) MonteVaR,\n(4) Monte_Sharpe\n\n\t\t'))
+    client_form['Risk'].append(risk.replace('1','MinVaR').replace('2','SharpeRatio').replace('3','MonteVaR').replace('4','SharpeBound'))
     client_form['Path'] = client_form['Symbol'] + ' ' +  client_form['Name'] + ' ' + client_form['Emails'] + ' ' + client_form['Money'] + ' ' + str(dt.date.today()) + 'xlsx'
     return client_form
                              

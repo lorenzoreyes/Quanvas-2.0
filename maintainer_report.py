@@ -1,9 +1,8 @@
+from packages import *
+from packages import * 
 # Same script as scanner.py, but parsing old excel
 # we have to notify via email to the client that the operation
 # had been done and paste the new scenario they are in.
-import os, shutil, glob 
-import pandas as pd, numpy as np
-import datetime as dt
 
 
 file = []

@@ -1,15 +1,4 @@
-import pandas as pd, datetime as dt, numpy as np
-import smtplib, re, os, ssl 
-import credentials, glob 
-import base64, shutil
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email import encoders
-import trackATM as tracker
-from templateReport import * # template html of all content of the email
-from maintainer_report import * 
+from packages import *
 os.system("python maintainer_report.py") # re-assurance to know it runs script
 
 xlsx = pd.read_excel('./maintain.xlsx')
