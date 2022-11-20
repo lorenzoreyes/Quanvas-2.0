@@ -66,7 +66,7 @@ def portfolio_operation():
 def operation():
   choice = portfolio_operation() # call function
   excel, name, request, transchoice = choice
-  print(excel[['pricePaid','priceToday','PnLpercentEach']])
+  print(excel[['weights','PnLpercentEach','adjust','percentReb']])
   print(f"Accumulated Return of\n{name} is\n[{excel.PnLpercent.values[0] - 1 :.4%}]\t [$ {round(excel.notionalToday.values[0] + excel.oldLiquidity.values[0],2)}]".center(50,'_'))
   question = (input("What you want to do? \n(1) Save and do something else, \n(2) Don't save, do something else \nOr (3) Quit.\n\nDecide:  "))
   if question == '1':
@@ -92,6 +92,6 @@ def operation():
       print("See ya next time buddy")
 
 # final iterator of eternal loop. Save recommendation, do another operation or leave.
-if __name__ =='__main__':
+if __name__ == '__main__':
   operation()
 

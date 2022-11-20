@@ -1,8 +1,11 @@
 from packages import *
-from packages import *
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+#
+
 '''
-Reads files at DATABASE, create columns 
-Status = [0,1,2,3] for 
+Reads files at DATABASE, create columns
+Status = [0,1,2,3] for
 0 do nothing
 1 rebalance weigths to original values
 2 change ammount of investment
@@ -17,7 +20,7 @@ file = []
 
 for filename in glob.iglob('./DATABASE/*'):
     file.append(filename)
-    
+
 file = pd.DataFrame(file,columns=['Path'])
 file['Symbol'] = [i.split()[0][2:].split('/')[-1] for i in file.Path.to_list()]
 file['Name'] = [' '.join(i.split()[1:3]) for i in file.Path.to_list()]

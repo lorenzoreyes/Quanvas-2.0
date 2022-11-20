@@ -31,7 +31,8 @@ def metrics(lista):
     df = df.sort_index(axis=0,ascending=True)
     df = df.fillna(method='ffill').dropna(axis=1)
     freeRisk = df.T.mean() # self-generated, as using Bitcoin as benchmark is a possibility but will bias the result
-    pct = df.pct_change()
+    #pct = df.pct_change() arithmetic returns
+    pct = np.log(df) - np.log(df.shift(1)) # logarithmic returns
     mean = pd.DataFrame(pct.mean(),columns=['Mean'],index=pct.columns)
     riskpct = mean.mean()
     mean_rf = mean - riskpct.mean()
@@ -41,7 +42,7 @@ def metrics(lista):
     lista = list(orderedsharpe.head(30).index.values)
     df = yahoo.download(lista,period="1y",interval="60m")["Adj Close"].fillna(method="ffill")
     riskfree = df.T.mean().fillna(method='ffill')
-    pct = df.pct_change().dropna() #(how='all')
+    pct = np.log(df) - np.log(df.shift(1)) # logarithmic returns
     riskpct = riskfree.pct_change().dropna()
     mean = pd.DataFrame(pct.mean(),columns=['Mean'],index=pct.columns)
     mean_rf = mean - riskpct.mean()
@@ -56,7 +57,7 @@ def metrics(lista):
     cov = df.pct_change().cov()
     alpha = 0.05
     rf = riskpct.mean()
-    num_portfolios = 10000
+    num_portfolios = 20000
     Upbound = 0.125
     result = [df,riskfree,pct,riskpct,mean,mean_rf,std,numerator,downside_risk,noa,weigths\
         ,observations,mean_returns,cov,alpha,rf,num_portfolios,Upbound]
@@ -144,6 +145,9 @@ def binance():
     z = y[~(y.symbol.str.contains('BULL')) & ~(y.symbol.str.contains('BEAR'))]
     z = z[~(z.symbol.str.contains('UP'))] # & ~(z.symbol.str.contains('DOWN'))]
     z = z[z.symbol.apply(lambda x: ('USDT' in x[-4:]))]
+    # we dont want stablecoins
+    stable =['TUSDUSDT','USDCUSDT','BUSDUSDT','USTCUSDT','LUNA1USDT']
+    z = z[~(z.symbol.str.contains('TUSDUSDT')) & ~(z.symbol.str.contains('USDCUSDT')) & ~(z.symbol.str.contains('BUSUSDT')) & ~(z.symbol.str.contains('USTCUSDT')) & ~(z.symbol.str.contains('SHIBUSDT')) & ~(z.symbol.str.contains('LUNA1USDT'))]
     z = z[z.lastPrice.astype(float)!=0]
     final = z[['symbol','lastPrice']]
     final = final.sort_values('symbol',ascending=True)

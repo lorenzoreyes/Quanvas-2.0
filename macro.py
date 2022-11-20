@@ -10,7 +10,12 @@ else:
     ssl._create_default_https_context = _create_unverified_https_context
 
 # read the database and generate all portfolio at once
-clients = pd.read_excel('new_clients.xlsx')
+# if not created, well create it
+try:
+    clients = pd.read_excel('new_clients.xlsx')
+except:
+    os.system("python fakeClients.py")
+
 mercados = ['GSPC','FTSE','CEDEARS','NIKKEI','BOVESPA','CANADA','AUSTRALIA','SHANGHAI','CRYPTO','MERVAL']
 
 path = []
@@ -39,7 +44,7 @@ def megaManager():
         data = info()
         warning = numbers[i]      # to know which element we are iterating and align markets data variables
         if warning == 8:
-            hedge = yahoo.download('BTCDOWN-USD',period='1d')['Adj Close']
+            hedge = yahoo.download('PAXG-USD',period='1d')['Adj Close']
 
 
         df, portfolioAdj, statistics_portfolios = optimizations(data)
@@ -54,8 +59,8 @@ def megaManager():
             if warning == 8:
               folder = os.makedirs(f'./NewOnes/', exist_ok=True)
               path = f'./NewOnes/' + str(dfs[warning]['Path'].values[j])
-              # Add a Hedge of BTCDOWNDUSDT 20%
-              best = pd.DataFrame(index=df.columns.to_list()+['BTCDOWN-USD'])
+              # Add a Hedge of PAXGDUSDT 20%
+              best = pd.DataFrame(index=df.columns.to_list()+['PAXG-USD'])
               best['capital'] = float(dfs[warning]['Money'].values[j])
               best['price'] = df.iloc[-1].to_list() + [hedge.values[-1]]
               best['weights'] = optimizations.loc[:,dfs[warning]['Risk'].values[j]].to_list() + [0.2]

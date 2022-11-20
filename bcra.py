@@ -43,7 +43,7 @@ reservorio['tc_oficial'] = reservas.iloc[:,-2].values
 indice = []
 for i in range(len(reservorio.index)):
   indice.append(dt.datetime.strptime(str(reservorio.index.values[i])[0:10],'%Y-%m-%d'))
-reservorio.index = indice 
+reservorio.index = indice
 
 # Reformat sheets into moentario main dataframe
 # we use pd.concat to keep the most quantity of days until now, to have the most fresh data
@@ -71,14 +71,16 @@ monetaria = pd.DataFrame.join(monetaria,depositado[['cta_ctes_publico','cta_ctes
 monetaria['M1_circulante_y_ctasctespublicas'] = monetaria['circulante'] + monetaria['cta_ctes_publico']
 monetaria = pd.DataFrame.join(monetaria,depositado[['caja_ahorro','plazos_tres','total_depositos_publico','total_depositos_privado','M2']],how='outer').sort_index().fillna(method='ffill')
 monetaria = monetaria[~monetaria.index.duplicated(keep='first')]
- 
+
 monetaria['M3'] = (monetaria['billete_publico'] + monetaria['billete_privado'] + monetaria['total_depositos_privado']) / monetaria['stock_reservas']
 monetaria = pd.DataFrame.join(monetaria,reservorio['tc_oficial'],how='outer').sort_index().fillna(method='ffill')
 monetaria['solidario'] = monetaria['tc_oficial'] * 1.30 * 1.35
-aapl = yahoo.download("AAPL AAPL.BA",start='2020-01-01')['Adj Close'].fillna(method="ffill")
+aapl = yahoo.download("AAPL AAPL.BA",start='2020-01-01',interval="1d")['Adj Close'].fillna(method="ffill")
 
 aapl = aapl.rename(columns={'AAPL.BA':'AAPLBA'})
 aapl['Cable Apple'] = (aapl.AAPLBA / aapl.AAPL) * 10
+aapl.index = pd.to_datetime(aapl.index)
+aapl.index = aapl.index.tz_localize(None)
 
 monetaria = pd.DataFrame.join(monetaria, aapl['Cable Apple'],how='outer').sort_index().fillna(method='ffill')
 monetaria = monetaria.fillna(method='ffill')
@@ -89,13 +91,13 @@ monetaria = monetaria.fillna(method='ffill')
 monetaria = round(monetaria,4)
 
 # translate columns to english
-monetaria = monetaria.rename(columns={'billete_publico':'public_coin','billete_privado':'private_coin','circulante':'supply',\
+'''monetaria = monetaria.rename(columns={'billete_publico':'public_coin','billete_privado':'private_coin','circulante':'supply',\
                                       'cta_cte_bcra':'bcra_current_account','pases':'bank_passes','stock_reservas':'reserves_stock',\
                                           'cta_ctes_publico':'public_current_accounts','cta_ctes_privado':'private_current_accounts','M1_circulante_y_ctasctespublicas':'M1',\
                                               'caja_ahorro':'saving_accounts','plazo_tres':'fixed_term','total_depositos_publico':'total_public_deposits','total_depositos_privado':'total_private_deposits',\
                                                   'M2':'M2','M3':'M3','tc_oficial':'Official_Exchange_Rate','solidario':'SOLIDARITY','FX Fundamental':'Fundamental Forex','Monetarista Blue':'Monetary Vision',\
                                                       'Brecha':'GAP'})
-
+'''
 toplot = monetaria.iloc[:,-8:-1].copy()
 
 precios = [' $'+ str(round(i,2)) for i in toplot.iloc[-1,:].to_list()]

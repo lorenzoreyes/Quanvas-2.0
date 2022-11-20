@@ -80,7 +80,7 @@ def market():
     final[['lastPrice','priceChangePercent']] = final[['lastPrice','priceChangePercent']].astype(float)
     final = final.sort_values('priceChangePercent',ascending=False)
     up = final.sort_values('priceChangePercent',ascending=False).head(3)
-    top = final[(final.symbol.str.contains('BTCDOWNUSDT'))].append(final[(final.symbol.str.contains('ETHUSDT'))]).append(final[(final.symbol.str.contains('ADAUSDT'))])
+    top = final[(final.symbol.str.contains('PAXGUSDT'))].append(final[(final.symbol.str.contains('ETHUSDT'))]).append(final[(final.symbol.str.contains('ADAUSDT'))])
     up = up.append(top)
     down = final[final.symbol.str.contains('DOWN')].sort_values('priceChangePercent',ascending=False).head(5)
     down = down.append(final[(final.symbol.str.contains('BURGERUSDT'))])

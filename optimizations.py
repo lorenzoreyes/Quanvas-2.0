@@ -13,8 +13,8 @@ def optimizations(data):
   def simulate_random_portfolios(num_portfolios, mean_returns, cov, rf):
     results_matrix = np.zeros((len(mean_returns)+3, num_portfolios))
     for i in range(num_portfolios):
-        # set some bounds, as we dont want more than x% in an asset
-        weights = np.random.uniform(low=0.0, high=0.125, size=(len(mean_returns)))
+        # set some bounds, as we dont want more than x% in?!?jedi=0,  an asset?!? (*_*o: Sized*_*) ?!?jedi?!?
+        weights = np.random.uniform(low=0.0, high=0.125*len(mean_returns), size=(len(mean_returns)))
         weights[weights<0.025], weights[weights>0.125] = 0,0.125 # do not want micro allocation
         weights /= np.sum(weights)
         portfolio_return, portfolio_std, sharpe_ratio = calc_portfolio_perf(weights, mean_returns, cov, rf)
@@ -83,7 +83,7 @@ def optimizations(data):
     portfolio['MinVaR'] = min_port_VaR().values
     portfolio['SharpeRatio'] = optimal().values
     portfolio['MonteVaR'] = monte_mvar.values
-    portfolio['MontheSharpe'] = monte_sharpe.values
+    portfolio['MonteSharpe'] = monte_sharpe.values
     return portfolio
 
   optimizations = portfolio()
@@ -126,7 +126,7 @@ def optimizations(data):
   portfolioAdj['MinVaR'] = AdjustRisk(optimizations['MinVaR'])
   portfolioAdj['SharpeRatio'] = AdjustRisk(optimizations['SharpeRatio'])
   portfolioAdj['MonteVaR'] = AdjustRisk(optimizations['MonteVaR'])
-  portfolioAdj['MontheSharpe'] = AdjustRisk(optimizations['MontheSharpe'])
+  portfolioAdj['MonteSharpe'] = AdjustRisk(optimizations['MonteSharpe'])
   #portfolioAdj[portfolioAdj<0.025], portfolioAdj[portfolioAdj>0.125] = 0, 0.125
   portfolioAdj = portfolioAdj.fillna(0)
   # OVERWRITE optimizations with all risk adjusted
@@ -135,7 +135,7 @@ def optimizations(data):
   Series = pd.DataFrame()
   Series['MonteVaR'] =((df * portfolioAdj['MonteVaR'].values).T.sum()).values
   Series['SharpeRatio'] = ((df * portfolioAdj['SharpeRatio'].values).T.sum()).values
-  Series['MontheSharpe'] = ((df * portfolioAdj['MontheSharpe'].values).T.sum()).values
+  Series['MonteSharpe'] = ((df * portfolioAdj['MonteSharpe'].values).T.sum()).values
   Series['MinVaR'] =      ((df * portfolioAdj['MinVaR'].values).T.sum()).values
   Series['BenchmarkEWAP'] = df.T.mean().values
   Series = Series.iloc[1:,:]

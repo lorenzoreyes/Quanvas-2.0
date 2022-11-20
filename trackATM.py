@@ -69,7 +69,7 @@ def AdjustRisk(data):
   portfolio = data # pd.read_excel(str(input("Type excel to work with: ")))
   listado = list(portfolio['Unnamed: 0'].values)
   data = yahoo.download(listado,period="1y",interval="60m")['Adj Close'].fillna(method='ffill')
-  returns = data.pct_change()
+  returns = np.log(data) - np.log(data.shift(1)) # logarithmic returns
   correlation = returns.corr() # correlation
   covariance = returns.cov()  # covariance
   instruments = pd.DataFrame(index= data.columns)

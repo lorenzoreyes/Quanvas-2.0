@@ -1,5 +1,6 @@
 from packages import *
-from packages import * 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 # Same script as scanner.py, but parsing old excel
 # we have to notify via email to the client that the operation
 # had been done and paste the new scenario they are in.

@@ -27,6 +27,7 @@ import random
 from faker import Faker
 from binance import Client, ThreadedWebsocketManager, ThreadedDepthCacheManager
 from apiBinance import *
+from controlpanel import *
 import scipy.optimize as sco
 from scipy import stats
 import scrap

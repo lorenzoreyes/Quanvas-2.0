@@ -39,7 +39,7 @@ def megaManager():
   elif market == '9':
       data = scrap.binance()
       symbol = 'CRYPTO'
-      hedge = yahoo.download('BTCDOWN-USD',period='1d')['Adj Close']
+      hedge = yahoo.download('PAXG-USD',period='1d')['Adj Close']
   elif market == '10':
       data = scrap.Merval()
       symbol = 'MERVAL'
@@ -69,8 +69,8 @@ def megaManager():
       path = f'./NewOnes/{symbol} ' + client + ' ' + str(input("Email address? "))\
               + ' ' + str(capital) + ' ' + profile + ' ' + str(dt.date.today()) + '.xlsx'
       if market == '9':
-          # Add a Hedge of BTCDOWNDUSDT 20%
-          best = pd.DataFrame(index=df.columns.to_list()+['BTCDOWN-USD'])
+          # Add a Hedge of PAXGDUSDT 20%
+          best = pd.DataFrame(index=df.columns.to_list()+['PAXG-USD'])
           best['capital'] = capital
           best['price'] = df.iloc[-1].to_list() + [hedge.values[-1]]
           # ENDS HEDGING
@@ -96,6 +96,7 @@ def megaManager():
           best['percentage'] = best['invested'] / sum(best['invested'])
           best['total'] = sum(best['invested'])
           best['liquid'] = best['capital'] - best['total']
+          best = best.sort_index(ascending=True)
       else:
           best = pd.DataFrame(index=df.columns)
           best['capital'] = capital
