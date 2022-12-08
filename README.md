@@ -20,12 +20,18 @@ Risk-Profiles From conservative to Agressive Sharpe Ratio to Min VaR
 ## pip install -r requirements.txt
 ## see fakeClients.py that simulates data for clients
 
+## 0-Remote Control
+```bash
+python main.py # Choose what to do from the remote control
+
+
+```
 
 ## 1-Step Create portfolio individually or macro 
 ```bash
 python micro.py # enter input of each portfolio by hand
 
-python fakeClients.py &&macro.py # reads  new_clients.xlsx as inputs
+python fakeClients.py && macro.py # reads  new_clients.xlsx as inputs
 ```
 ## 2-Notify Portolio Creation & its daily performance 
 ```bash
