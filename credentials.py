@@ -1,3 +1,2 @@
-from packages import *
-account = 'lreyes@udesa.edu.ar'
-password = 'Lr*2013'
+account = 'your@email.account'
+password = 'your_password'
