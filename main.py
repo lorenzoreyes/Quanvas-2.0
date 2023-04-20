@@ -23,5 +23,4 @@ def commands(points):
     input("\nPRESS [ENTER] in order to continue")
     commands(points)
 
-if __name__ == '__main__':
-  commands(points)
+commands(points)
