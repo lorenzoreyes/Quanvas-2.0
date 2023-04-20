@@ -1,4 +1,4 @@
-'''
+prompt = '''
 Remote control to trigger all custom programs
 of Quanvas as they are needed by the user
 '''
@@ -10,7 +10,7 @@ points = ["argentinafx","ATM","micro","macro","todo_maintenance",\
 endpoints = {k: v for k, v in enumerate(points)}
 
 def commands(points):
-    os.system("clear")
+    os.system("clear"),print(prompt)
     [print(f"{i} : {points[i]}") for i in range(len(points))]
     cmd = input("\nSELECT A PROGRAM TO EXECUTE\n\n\n>>>\t")
     try: # let the user choose
