@@ -6,15 +6,6 @@ today = dt.date.today()
 end = dt.date.today()
 start = end - dt.timedelta(365)
 
-# trigger update for Central Bank excel
-os.system("python bcra.py")
-
-reservas = pd.read_excel('seriese.xlsx',sheet_name='RESERVAS')
-
-# Sheet Reservas
-reservas = reservas.iloc[8:,:]
-reservas = pd.DataFrame(reservas.iloc[:,-2].values,columns=['Spot'],index=reservas.iloc[:,0].values)
-
 # initialize API Connection Educational Account
 pyRofex.initialize(user="MD_REYES",
                    password="Lorenzo6+",
@@ -37,7 +28,7 @@ for i in range(len(fechas)):
 futuros = tickets.copy()
 
 response = pyRofex.get_all_instruments()
-# symbols = pd.DataFrame(pd.json_normalize(instruments['instrumentId'])['symbol'].values,columns=['tickets'])
+# symbols = pd.json_normalize(response['instruments'])
 for inst in response['instruments']:
     futuros.append(inst['instrumentId']['symbol'])
 
@@ -140,6 +131,7 @@ tasa_implicita = pd.DataFrame(0,columns=dolar.columns[2:],index=vida.index)
 for i in range(len(tasa_implicita.columns)):
     tasa_implicita[f'{tasa_implicita.columns[i]}'] = ((dolar.iloc[:,i+2].values/ dolar.iloc[:,1].values) -1)
     tasa_implicita[f'{tasa_implicita.columns[i]}'] =  (tasa_implicita[f'{tasa_implicita.columns[i]}'] * (365 / ((vida.columns[i] - vida.index).days).values)).values
+    #tasa_implicita[f'{tasa_implicita.columns[i]}'] =  (tasa_implicita[f'{tasa_implicita.columns[i]}'] * (365 / vida.iloc[:,i].values)).values
 
 tasa_implicita = tasa_implicita.sort_index(axis=0,ascending=True)
 

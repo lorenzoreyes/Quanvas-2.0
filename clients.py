@@ -57,4 +57,4 @@ clients['TimeStamp'] = dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
 
 writer = pd.ExcelWriter('clients.xlsx',engine='xlsxwriter')
 clients.to_excel(writer)
-writer.save()
+writer.close()

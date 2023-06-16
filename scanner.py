@@ -34,4 +34,4 @@ file.index = range(len(file))
 
 writer = pd.ExcelWriter('scanner.xlsx',engine='xlsxwriter')
 file.to_excel(writer)
-writer.save()
+writer.close()

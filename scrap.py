@@ -57,8 +57,8 @@ def metrics(lista):
     cov = df.pct_change().cov()
     alpha = 0.05
     rf = riskpct.mean()
-    num_portfolios = 20000
-    Upbound = 0.125
+    num_portfolios = 1000
+    Upbound = 0.85
     result = [df,riskfree,pct,riskpct,mean,mean_rf,std,numerator,downside_risk,noa,weigths\
         ,observations,mean_returns,cov,alpha,rf,num_portfolios,Upbound]
     return result
@@ -145,9 +145,9 @@ def binance():
     z = y[~(y.symbol.str.contains('BULL')) & ~(y.symbol.str.contains('BEAR'))]
     z = z[~(z.symbol.str.contains('UP'))] # & ~(z.symbol.str.contains('DOWN'))]
     z = z[z.symbol.apply(lambda x: ('USDT' in x[-4:]))]
-    # we dont want stablecoins
-    stable =['TUSDUSDT','USDCUSDT','BUSDUSDT','USTCUSDT','LUNA1USDT']
-    z = z[~(z.symbol.str.contains('TUSDUSDT')) & ~(z.symbol.str.contains('USDCUSDT')) & ~(z.symbol.str.contains('BUSUSDT')) & ~(z.symbol.str.contains('USTCUSDT')) & ~(z.symbol.str.contains('SHIBUSDT')) & ~(z.symbol.str.contains('LUNA1USDT'))]
+    # undesirable coins, paxg we later use it to hedge
+    stable =['TUSDUSDT','USDCUSDT','BUSDUSDT','USTCUSDT','LUNA1USDT','LUNAUSDT','PAXGUSDT','REIUSDT','TRONUSDT','SHIBUSDT']
+    z = z[~(z.symbol.isin(stable))]
     z = z[z.lastPrice.astype(float)!=0]
     final = z[['symbol','lastPrice']]
     final = final.sort_values('symbol',ascending=True)

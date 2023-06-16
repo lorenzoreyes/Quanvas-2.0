@@ -5,8 +5,12 @@ plt.style.use('fivethirtyeight')
 today = dt.date.today()
 
 os.system("curl https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/series.xlsm > seriese.xlsx")
-
-
+os.system("python al30.py")
+bonos = pd.read_excel('al30.xlsx',sheet_name='cable bonos')
+bonos.index = bonos['fecha']
+del bonos['fecha']
+bonos.index = [dt.datetime.strptime(str(i), "%Y-%m-%d") for i in bonos.index.to_list()]
+    
 basem = pd.read_excel('seriese.xlsx', sheet_name='BASE MONETARIA')
 reservas = pd.read_excel('seriese.xlsx', sheet_name='RESERVAS')
 depositos = pd.read_excel('seriese.xlsx', sheet_name='DEPOSITOS')
@@ -47,9 +51,6 @@ reservorio.index = indice
 
 # Reformat sheets into moentario main dataframe
 # we use pd.concat to keep the most quantity of days until now, to have the most fresh data
-#herramientas,reservorio = herramientas.loc['2020':],reservorio.loc['2020':]
-#monetaria = pd.merge(monetaria, herramientas['pases'], left_index=True, right_index=True)
-#monetaria = pd.concat([monetaria,herramientas['pases']]).sort_index().fillna(method='ffill')
 monetaria = pd.DataFrame.join(monetaria,herramientas,how='outer').sort_index().fillna(method='ffill')
 monetaria = pd.DataFrame.join(monetaria,reservorio['stock_reservas'],how='outer').sort_index().fillna(method='ffill')
 monetaria = monetaria[~monetaria.index.duplicated(keep='first')]
@@ -72,7 +73,8 @@ monetaria['M1_circulante_y_ctasctespublicas'] = monetaria['circulante'] + moneta
 monetaria = pd.DataFrame.join(monetaria,depositado[['caja_ahorro','plazos_tres','total_depositos_publico','total_depositos_privado','M2']],how='outer').sort_index().fillna(method='ffill')
 monetaria = monetaria[~monetaria.index.duplicated(keep='first')]
 
-monetaria['M3'] = (monetaria['billete_publico'] + monetaria['billete_privado'] + monetaria['total_depositos_privado']) / monetaria['stock_reservas']
+monetaria['M3'] = (monetaria['M2'] + monetaria['billete_publico'] + monetaria['billete_privado'] + monetaria['total_depositos_privado']) / monetaria['stock_reservas']
+monetaria['Dolarizar'] = (monetaria['M2'] + monetaria['billete_publico'] + monetaria['billete_privado'] + monetaria['total_depositos_privado'] + monetaria['leliqs']) / monetaria['stock_reservas']
 monetaria = pd.DataFrame.join(monetaria,reservorio['tc_oficial'],how='outer').sort_index().fillna(method='ffill')
 monetaria['solidario'] = monetaria['tc_oficial'] * 1.30 * 1.35
 aapl = yahoo.download("AAPL AAPL.BA",start='2020-01-01',interval="1d")['Adj Close'].fillna(method="ffill")
@@ -85,7 +87,7 @@ aapl.index = aapl.index.tz_localize(None)
 monetaria = pd.DataFrame.join(monetaria, aapl['Cable Apple'],how='outer').sort_index().fillna(method='ffill')
 monetaria = monetaria.fillna(method='ffill')
 monetaria['FX Fundamental'] = (monetaria['pases'] + monetaria['leliqs'] + monetaria['legar'] + monetaria['total_base']) / monetaria['stock_reservas']
-monetaria['Monetarista Blue'] = monetaria['tc_oficial'] * (1 + (-monetaria['total_base'].pct_change().cumsum() + monetaria['Cable Apple'].pct_change().cumsum()))
+monetaria['Monetarista Blue'] = monetaria['solidario'] * (1 + (-monetaria['total_base'].pct_change().cumsum() + monetaria['Cable Apple'].pct_change().cumsum()))
 monetaria['Brecha'] = (monetaria['Cable Apple'] / monetaria['tc_oficial']) - 1.0
 monetaria = monetaria.fillna(method='ffill')
 monetaria = round(monetaria,4)
@@ -98,7 +100,10 @@ monetaria = round(monetaria,4)
                                                   'M2':'M2','M3':'M3','tc_oficial':'Official_Exchange_Rate','solidario':'SOLIDARITY','FX Fundamental':'Fundamental Forex','Monetarista Blue':'Monetary Vision',\
                                                       'Brecha':'GAP'})
 '''
-toplot = monetaria.iloc[:,-8:-1].copy()
+monetaria = pd.DataFrame.join(monetaria,bonos,how='outer').sort_index().fillna(method='ffill')
+
+toplot = monetaria.iloc[:,-8:].copy()
+del toplot['Brecha']
 
 precios = [' $'+ str(round(i,2)) for i in toplot.iloc[-1,:].to_list()]
 columnas = [toplot.columns[i] + precios[i] for i in range(len(precios))]
@@ -107,7 +112,7 @@ toplot.columns = columnas
 # Final plots
 fig = plt.figure(figsize=(25,12))
 ax1 = fig.add_subplot(111)
-toplot.iloc[:,-6:-1].plot(ax=ax1, lw=3.)
+toplot.plot(ax=ax1, lw=3.)
 ax1.set_title('Argentina Forex', fontsize=60, fontweight='bold')
 ax1.grid(linewidth=2)
 ax1.legend(fontsize=30)
@@ -115,10 +120,23 @@ plt.xticks(size = 20)
 plt.yticks(size = 20)
 plt.savefig('ArgentinaFX.png',dpi=50)
 
+# Final plots
+#fecha = (str(0) + str(dt.date.today().month)) if dt.date.today().month < 10 else str(dt.date.today().month)
+fecha = str(dt.date.today() - dt.timedelta(265))
+fig = plt.figure(figsize=(25,12))
+ax1 = fig.add_subplot(111)
+toplot.loc[f'{fecha}':].plot(ax=ax1, lw=3.)
+ax1.set_title('Argentina Forex', fontsize=60, fontweight='bold')
+ax1.grid(linewidth=2)
+ax1.legend(fontsize=30)
+plt.xticks(size = 20)
+plt.yticks(size = 20)
+plt.savefig('year.png',dpi=50)
+
 
 figb = plt.figure(figsize=(25,12))
 ax1 = figb.add_subplot(111)
-toplot.iloc[:,-1].plot(ax=ax1, lw=2.)
+monetaria['Brecha'].plot(ax=ax1, lw=2.)
 ax1.set_title('GAP CCL AAPLBA vs. Official', fontsize=40, fontweight='bold')
 ax1.grid(linewidth=2)
 ax1.legend(fontsize=20)
@@ -129,4 +147,4 @@ plt.savefig('gap.png',dpi=50)
 # save the excel
 writer = pd.ExcelWriter(f'Central Bank Report {today}.xlsx',engine='xlsxwriter')
 monetaria.to_excel(writer,sheet_name=f'report {today}',index=True)
-writer.save()
+writer.close()

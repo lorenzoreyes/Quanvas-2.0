@@ -1,3 +1,2 @@
-from packages import *
-API_KEY = 'PUBLIC_KEY'
-API_SECRET = 'SECRET_KEY'
+API_KEY = 'glI1mvwmu7iQ1I9J8co5YWklinwRD9sI2UQhmRF2bvVJfBzlWR6VzW0OxzYxkSAX'
+API_SECRET = 'AypNGBtKe58t9wnC6ncCkCzIlEdtjB4EYaMvuX06e5DzZsBNlpAyFq6c2oxZjxsv'

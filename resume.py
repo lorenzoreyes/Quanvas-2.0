@@ -1,5 +1,4 @@
 from packages import *
-from packages import *
 
 file = []
 
@@ -51,6 +50,7 @@ for i in range(len(clients)):
   portfolio['oldLiquidity'] = holdings['liquid'].values
   stocks = list(portfolio.index)
   portfolio['priceToday'] = update
+  portfolio = portfolio[portfolio['priceToday'].notna()]
   portfolio['notionalToday'] = sum(portfolio['priceToday'] * portfolio['nominal'])
   portfolio['PnLpercent'] = portfolio['notionalToday'] / portfolio['notionalStart']
   portfolio['PnLpercentEach'] = portfolio['priceToday'] / portfolio['pricePaid']

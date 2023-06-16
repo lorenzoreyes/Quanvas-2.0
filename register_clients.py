@@ -37,4 +37,4 @@ if __name__ == '__main__':
     client_form = pd.DataFrame(list(client_form.values()),index=list(client_form.keys())).T
     writer = pd.ExcelWriter('new_clients.xlsx',engine='xlsxwriter')
     client_form.to_excel(writer)
-    writer.save()
+    writer.close()

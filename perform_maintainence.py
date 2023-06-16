@@ -88,7 +88,7 @@ for i in range(len(clients)):
       basics.to_excel(writer,sheet_name=f'Updated {dt.date.today()}')
       portfolio.to_excel(writer,sheet_name='Update Done')
       previous.to_excel(writer,sheet_name='Previous Composition')
-      writer.save()
+      writer.close()
       # Reset Status to 0 as the time done the operation
       clients.Status.values[i] = 0
       clients.TimeStamp.values[i] = dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
@@ -140,7 +140,7 @@ for i in range(len(clients)):
       basics.to_excel(writer,sheet_name=f"Changed {dt.date.today()}")
       portfolio.to_excel(writer,sheet_name='Operation Change')
       previous.to_excel(writer,sheet_name='Previous Composition')
-      writer.save()
+      writer.close()
       clients.TimeStamp.values[i] = dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
       # Reset Status to 0 as there any changes pending to do
       clients.Status.values[i] = 0
@@ -226,7 +226,7 @@ for i in range(len(clients)):
       basics.to_excel(writer,sheet_name=f"Risk {dt.date.today()}")
       portfolio.to_excel(writer,sheet_name='Risk Updated')
       previous.to_excel(writer,sheet_name='Previous Composition')
-      writer.save()
+      writer.close()
       clients.TimeStamp.values[i] = dt.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
       # Reset Status to 0 as there any changes pending to do
       clients.Status.values[i] = 0
@@ -242,4 +242,4 @@ for i in range(len(to_delete)):
 
 writer = pd.ExcelWriter('scanner.xlsx',engine='xlsxwriter')
 clients.to_excel(writer)
-writer.save()
+writer.close()

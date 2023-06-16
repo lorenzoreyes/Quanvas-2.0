@@ -1,5 +1,5 @@
 from packages import *
-from packages import *
+
 file = []
 
 for filename in glob.iglob('./NewOnes/*'):
@@ -29,7 +29,7 @@ excel.index = range(len(excel))
 
 writer = pd.ExcelWriter('NewOnes.xlsx',engine='xlsxwriter')
 excel.to_excel(writer)
-writer.save()
+writer.close()
 clients = excel
 
 today = dt.date.today().strftime('%d-%m-%Y')

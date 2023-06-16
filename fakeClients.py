@@ -22,12 +22,7 @@ clients['Money'] = money
 
 mercados = ['GSPC','FTSE','CEDEARS','NIKKEI','BOVESPA','CANADA','AUSTRALIA','SHANGHAI','CRYPTO','MERVAL']
 
-'''
-markets = []
-for _ in range(len(clients)):
-    markets.append(random.randrange(0,len(mercados),1))
-'''
-clients['Markets'] = 8 #markets
+clients['Markets'] = 8 
 
 symbol = []
 for i in range(len(clients)):
@@ -35,7 +30,7 @@ for i in range(len(clients)):
 
 clients['Symbol'] = symbol
 
-risks = ['SharpeRatio','MonteVaR','Monte_Sharpe','MinVaR']
+risks = ['SharpeRatio','MonteVaR','MonteSharpe','MinVaR']
 optimization = []
 for _ in range(len(clients)):
     optimization.append(risks[random.randrange(0,4,1)])
@@ -50,4 +45,4 @@ clients['Path'] = path
 
 writer = pd.ExcelWriter('new_clients.xlsx',engine='xlsxwriter')
 clients.to_excel(writer)
-writer.save()
+writer.close()

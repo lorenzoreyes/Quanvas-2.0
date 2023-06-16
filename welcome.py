@@ -29,7 +29,7 @@ excel.index = range(len(excel))
 
 writer = pd.ExcelWriter('NewOnes.xlsx',engine='xlsxwriter')
 excel.to_excel(writer)
-writer.save()
+writer.close()
 clients = excel
 
 today = dt.date.today().strftime('%d-%m-%Y')
@@ -96,7 +96,7 @@ for i in range(len(file)):
   def sendEmail(html_file):
       msg = MIMEMultipart('alternative')
       msg['X-Priority'] = '1'
-      msg['Subject'] = f"Welcome to QUANVAS {cliente} {today}"
+      msg['Subject'] = f"{cliente} {today} Lorenzo Reyes Demo"
       msg['From'] = credentials.account
       msg['To'] = ",".join(recipients)
       # Large Excel

@@ -62,25 +62,28 @@ dollars = [i.replace('[','').replace(']',',').replace(' ','').replace("'","") fo
 dollar = bonds[bonds.Especie.isin(dollars)]
 
 download = sorted(cer.Especie.to_list() + dollar.Especie.to_list())
+'''
 chrome_options = Options()
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox") # linux only
+chrome_options.add_argument("--headless")
 chrome_options.add_argument("--start-maximized");
 chrome_options.headless = True # also works
 bot = webdriver.Chrome(options=chrome_options)
 
 for i in range(len(download)):
     bot.get(f'https://www.rava.com/perfil/{download[i]}')
-    time.sleep(1)
+    time.sleep(2)
     with open(f'{download[i]}.html', 'w+') as f:
         f.write(bot.page_source)
     button = bot.find_element(by='xpath',value='//*[@id="Coti-hist-c"]/div/div[3]/button')
-    time.sleep(1)
+    time.sleep(2)
     button
     bot.execute_script("arguments[0].click();", button)
     print("Bond obtained...\t {}.\t Download data and cashflow.".format(download[i]))
-    time.sleep(1)
+    time.sleep(2)
+'''
 
 dolarizados = dollar[(dollar.Especie.apply(lambda x: ('D' in x[-1])))]['Especie'].to_list()
 pesificados = dollar[~(dollar.Especie.apply(lambda x: ('D' in x[-1])))]['Especie'].to_list()
@@ -150,7 +153,7 @@ ax1 = fig.add_subplot(111)
 cable.loc['2022-03':].plot(ax=ax1, lw=4.)
 ax1.set_title('Bonos Cable', fontsize=50, fontweight='bold')
 ax1.grid(True,color='k',linestyle='-.',linewidth=2)
-ax1.legend(columnas,loc='best', bbox_to_anchor=(1, 0.75),fontsize=40)
+ax1.legend(loc='best', bbox_to_anchor=(1, 0.75),fontsize=40)
 plt.xticks(size=30, rotation=45)
 plt.yticks(size=40, rotation=45)
 plt.savefig('cableBonos.png',bbox_inches='tight')

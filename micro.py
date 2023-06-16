@@ -1,4 +1,6 @@
 from packages import *
+from optimizations import optimizations
+import scrap
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -69,12 +71,12 @@ def megaManager():
       path = f'./NewOnes/{symbol} ' + client + ' ' + str(input("Email address? "))\
               + ' ' + str(capital) + ' ' + profile + ' ' + str(dt.date.today()) + '.xlsx'
       if market == '9':
-          # Add a Hedge of PAXGDUSDT 20%
+          # Add a Hedge of PAXGUSDT 20%
           best = pd.DataFrame(index=df.columns.to_list()+['PAXG-USD'])
           best['capital'] = capital
           best['price'] = df.iloc[-1].to_list() + [hedge.values[-1]]
           # ENDS HEDGING
-          best['weights'] = portfolioAdj[f'{profile}'].to_list() + [0.2]
+          best['weights'] = portfolioAdj[f'{profile}'].to_list() + [0.24]
           best['weights'] =  best['weights'] / best['weights'].sum()
           best['cash'] = (best['capital'] * best['weights'])
           best['cash'] = round(best['cash'])
@@ -83,20 +85,21 @@ def megaManager():
           best['percentage'] = best['invested'] / sum(best['invested'])
           best['total'] = sum(best['invested'])
           best['liquid'] = best['capital'] - best['total']
-          best = best[best.nominal!=0].dropna() # remove all stocks that you do not invest in
+          best = best[best.weights!=0].dropna() # remove all stocks that you do not invest in
           ### to adjust weights in order to invest the maximum capital possible
           reinvest = (best['liquid'][0] / best['total'][0]) + 1 # ROUND DOWN DIFFERENCE
           best['weights'] = (best['weights'] * reinvest)
           best['weights'] = best['weights'] / best['weights'].sum()
-          best['cash'] = (best['capital'] * best['weights'])
-          best['nominal'] =  best['cash'] // best['price']
-          best = best[best['invested']>10]
+          best['cash'] = (best['capital'] * best['weights']) 
+          # crypto remember fractional investing
+          best['nominal'] =  best['cash'] / best['price']
           best['invested'] = best['price'] * best['nominal']
-          best['invested'] = round(best['invested'])
           best['percentage'] = best['invested'] / sum(best['invested'])
+          # minimum keep 3% in order to invest in an asset
+          best = best[best['percentage']>0.03]
+          best['invested'] = round(best['invested'])
           best['total'] = sum(best['invested'])
           best['liquid'] = best['capital'] - best['total']
-          best = best.sort_index(ascending=True)
       else:
           best = pd.DataFrame(index=df.columns)
           best['capital'] = capital
@@ -105,17 +108,31 @@ def megaManager():
           best['weights'] =  best['weights'] / best['weights'].sum()
           best['cash'] = (best['capital'] * best['weights'])
           best['cash'] = round(best['cash'])
-          best['nominal'] =  best['cash'] / best['price']
+          best['nominal'] =  best['cash'] // best['price']
           best['invested'] = best['price'] * best['nominal']
           best['percentage'] = best['invested'] / sum(best['invested'])
+          # minimum keep 3% in order to invest in an asset
+          best = best[best['percentage']>0.03]
           best['total'] = sum(best['invested'])
           best['liquid'] = best['capital'] - best['total']
-          best = best[best.nominal!=0].dropna() # remove all stocks that you do not invest in
+          reinvest = (best['liquid'][0] / best['total'][0]) + 1 # ROUND DOWN DIFFERENCE
+          best['weights'] = (best['weights'] * reinvest)
+          best['weights'] = best['weights'] / best['weights'].sum()
+          best['cash'] = (best['capital'] * best['weights']) 
+          # crypto remember fractional investing
+          best['nominal'] =  best['cash'] // best['price']
+          best['invested'] = best['price'] * best['nominal']
+          best['percentage'] = best['invested'] / sum(best['invested'])
+          best['invested'] = round(best['invested'])
+          best['total'] = sum(best['invested'])
+          best['liquid'] = best['capital'] - best['total']
 
+    
+      best = best.sort_index(ascending=True)
       writer = pd.ExcelWriter(path, engine='xlsxwriter')
       best.to_excel(writer,sheet_name=f'{profile}')
       portfolioAdj.to_excel(writer, sheet_name='portfolioWeights')
       statistics_portfolios.to_excel(writer, sheet_name='descriptiveStatistics')
-      writer.save()
+      writer.close()
 
 handle = megaManager()

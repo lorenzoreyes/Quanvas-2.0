@@ -1,5 +1,5 @@
 from packages import *
-'''
+''' 
 A tiny program to enter input to scanner.xlsx
 Status and Change columns
 in order to leave it for maintainer_perform.py script
@@ -26,21 +26,19 @@ def portfolio_operation():
     if state==2:
         change = int(input("\nSpecify capital to deposit or withdraw\n\n\t"))
     database.Status.values[index], database.Change.values[index] = int(state), int(change)
-    writer = pd.ExcelWriter("scanner.xlsx",engine="xlsxwriter")
-    database.to_excel(writer,index=False)
-    writer.save()
-
+    database.to_xlsx('scanner.xlsx',index=False)
+    
 def trigger():
     portfolio_operation()
     question = (input("What you want to do? \n(1) Do another one, \n(2) Quit.\n\nDecide:  "))
     if question == '1':
      trigger()
     else:
-     print('End todos')
-
+     print('End todos') 
+    
 # final iterator of eternal loop. Save recommendation, do another operation or leave.
 if __name__ =='__main__':
   trigger()
 
-
-
+        
+    

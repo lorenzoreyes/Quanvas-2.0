@@ -58,15 +58,16 @@ def portfolio_operation():
         data, operation = tracker.DepositOrWithdraw(data,amount), 'Change'
     elif choice == 3:
         data, operation = tracker.portfolioRiskUpdated(data), 'Reset'
-
-    lista = [data,f'{client[f"{name} Portfolios"][order]}',order, operation]
+    # data[1] is for nans
+    lista = [data[0],data[1],f'{client[f"{name} Portfolios"][order]}',order,operation]
     return lista # data saved as a list because we can track name of the client to further save
 
 # 3. Print it out. Make a decisition, (a) save and do something else, (b) don't save and do something else or (c) quit.
 def operation():
   choice = portfolio_operation() # call function
-  excel, name, request, transchoice = choice
+  excel, nans, name, request, transchoice = choice
   print(excel[['weights','pricePaid','priceToday','PnLpercentEach','percentReb']])
+  print("\nStocks to SOLD RIGHTAWAY\t",nans)
   print(f"Accumulated Return of\n{name} is\n[{excel.PnLpercent.values[0] - 1 :.4%}]\t [$ {round(excel.notionalToday.values[0] + excel.oldLiquidity.values[0],2)}]".center(50,'_'))
   question = (input("What you want to do? \n(1) Save and do something else, \n(2) Don't save, do something else \nOr (3) Quit.\n\nDecide:  "))
   if question == '1':
@@ -81,10 +82,10 @@ def operation():
       sheet = filename + ' ' + str(dt.date.today())
       new = os.makedirs('Update',exist_ok=True)
       path = './Update/' + transchoice + ' ' + oldCapital + ' ' + sheet
-      writer = pd.ExcelWriter(f'{path}.xlsx', engine='xlsxwriter')
+      writer = pd.ExcelWriter(f'{path}.xlsx'        , engine='xlsxwriter')
       basics.to_excel(writer, sheet_name=str(dt.date.today()))
       excel.to_excel(writer,sheet_name='change made, old New')
-      writer.save()
+      writer.close()
       operation()
   elif question == '2':
       operation()

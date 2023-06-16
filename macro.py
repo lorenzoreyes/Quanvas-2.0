@@ -1,5 +1,5 @@
 from packages import *
-from packages import *
+
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -63,7 +63,7 @@ def megaManager():
               best = pd.DataFrame(index=df.columns.to_list()+['PAXG-USD'])
               best['capital'] = float(dfs[warning]['Money'].values[j])
               best['price'] = df.iloc[-1].to_list() + [hedge.values[-1]]
-              best['weights'] = optimizations.loc[:,dfs[warning]['Risk'].values[j]].to_list() + [0.2]
+              best['weights'] = portfolioAdj[dfs[8]['Risk'][j]].to_list() + [0.2]
               best['weights'] =  best['weights'] / best['weights'].sum()
               best['cash'] = (best['capital'] * best['weights'])
               # ENDS HEDGING
@@ -118,6 +118,6 @@ def megaManager():
             best.to_excel(writer,sheet_name=f'{dfs[warning]["Names"].values[j]}')
             portfolioAdj.to_excel(writer, sheet_name='portfolioWeights')
             statistics_portfolios.to_excel(writer, sheet_name='descriptiveStatistics')
-            writer.save()
+            writer.close()
 
 handle = megaManager()

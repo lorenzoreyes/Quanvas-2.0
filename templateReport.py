@@ -48,7 +48,7 @@ end_html ='''
 
 
 highlight = """<div class="header">
-                <h2>&lt;QUANVAS/&gt;</h2>
+                <h2>&lt;Quanvas/&gt;</h2>
               </div> """
 
 script = """
