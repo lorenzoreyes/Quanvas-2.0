@@ -5,11 +5,6 @@ plt.style.use('fivethirtyeight')
 today = dt.date.today()
 
 os.system("curl https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/series.xlsm > seriese.xlsx")
-os.system("python al30.py")
-bonos = pd.read_excel('al30.xlsx',sheet_name='cable bonos')
-bonos.index = bonos['fecha']
-del bonos['fecha']
-bonos.index = [dt.datetime.strptime(str(i), "%Y-%m-%d") for i in bonos.index.to_list()]
     
 basem = pd.read_excel('seriese.xlsx', sheet_name='BASE MONETARIA')
 reservas = pd.read_excel('seriese.xlsx', sheet_name='RESERVAS')
@@ -100,51 +95,3 @@ monetaria = round(monetaria,4)
                                                   'M2':'M2','M3':'M3','tc_oficial':'Official_Exchange_Rate','solidario':'SOLIDARITY','FX Fundamental':'Fundamental Forex','Monetarista Blue':'Monetary Vision',\
                                                       'Brecha':'GAP'})
 '''
-monetaria = pd.DataFrame.join(monetaria,bonos,how='outer').sort_index().fillna(method='ffill')
-
-toplot = monetaria.iloc[:,-8:].copy()
-del toplot['Brecha']
-
-precios = [' $'+ str(round(i,2)) for i in toplot.iloc[-1,:].to_list()]
-columnas = [toplot.columns[i] + precios[i] for i in range(len(precios))]
-toplot.columns = columnas
-
-# Final plots
-fig = plt.figure(figsize=(25,12))
-ax1 = fig.add_subplot(111)
-toplot.plot(ax=ax1, lw=3.)
-ax1.set_title('Argentina Forex', fontsize=60, fontweight='bold')
-ax1.grid(linewidth=2)
-ax1.legend(fontsize=30)
-plt.xticks(size = 20)
-plt.yticks(size = 20)
-plt.savefig('ArgentinaFX.png',dpi=50)
-
-# Final plots
-#fecha = (str(0) + str(dt.date.today().month)) if dt.date.today().month < 10 else str(dt.date.today().month)
-fecha = str(dt.date.today() - dt.timedelta(265))
-fig = plt.figure(figsize=(25,12))
-ax1 = fig.add_subplot(111)
-toplot.loc[f'{fecha}':].plot(ax=ax1, lw=5.)
-ax1.set_title('Argentina Forex', fontsize=60, fontweight='bold')
-ax1.grid(linewidth=2)
-ax1.legend(fontsize=30)
-plt.xticks(size = 20)
-plt.yticks(size = 20)
-plt.savefig('year.png',dpi=50)
-
-
-figb = plt.figure(figsize=(25,12))
-ax1 = figb.add_subplot(111)
-monetaria['Brecha'].plot(ax=ax1, lw=2.)
-ax1.set_title('GAP CCL AAPLBA vs. Official', fontsize=40, fontweight='bold')
-ax1.grid(linewidth=2)
-ax1.legend(fontsize=20)
-plt.xticks(size = 30)
-plt.yticks(size = 30)
-plt.savefig('gap.png',dpi=50)
-
-# save the excel
-writer = pd.ExcelWriter('Central-Bank-Report.xlsx',engine='xlsxwriter')
-monetaria.to_excel(writer,sheet_name='report',index=True)
-writer.close()

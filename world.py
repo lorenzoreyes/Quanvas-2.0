@@ -6,7 +6,7 @@ data = yahoo.download(coins, period='1y')['Adj Close'].fillna(method='ffill')
 
 fig = plt.figure(figsize=(40,25))
 ax1 = fig.add_subplot(111)
-data[['DX-Y.NYB', 'GC=F']].pct_change().cumsum().plot(ax=ax1, lw=7.,c='k')
+data[['DX-Y.NYB', 'GC=F']].pct_change().cumsum().plot(ax=ax1, lw=9.,c='k')
 data.pct_change().cumsum().plot(ax=ax1, lw=4.)
 ax1.set_title('Coins World', fontsize=50, fontweight='bold')
 ax1.grid(True,color='k',linestyle='-.',linewidth=2)

@@ -146,7 +146,7 @@ def optimizations(data):
 
   # sheet to have statistics metrics of the portfolio
   statistics_portfolios = pct.describe(percentiles=[0.01, 0.05, 0.10]).T
-  statistics_portfolios['mad'] = pct.mad()
+  #statistics_portfolios['mad'] = pct.mad()
   statistics_portfolios['skew'] = pct.skew()
   statistics_portfolios['kurtosis'] = pct.kurtosis()
   statistics_portfolios['annualizedStd'] = statistics_portfolios['std'] * np.sqrt(len(Series))

@@ -23,7 +23,7 @@ pyRofex.initialize(user="MD_REYES",
 
 # make a list of all available month from current to 12 forwards
 pasado = dt.date.today() - dt.timedelta(365)
-fechas = list(pd.date_range(pasado,end+dt.timedelta(300),freq='M'))
+fechas = list(pd.date_range(pasado,end+dt.timedelta(300),freq='WOM-3FRI'))
 
 # create proper tickets as a dictionary
 # format 'Currency/MONTH/YEAR' => Dollar Future August 2022 => DLR/AGO22
@@ -55,7 +55,7 @@ for i in range(len(tickets)):
 # concatenate all dataframes and sort index so no information get deleted
 #dolar = pd.concat([futuros[0],futuros[1],futuros[2],futuros[3],futuros[4],futuros[5],futuros[6],futuros[7],futuros[8],futuros[9],futuros[10],futuros[11],futuros[12],futuros[13],futuros[14],futuros[15],futuros[16],futuros[17],futuros[18],futuros[19],futuros[20],futuros[21]]).sort_index()
 
-dolar = pd.concat([futuros[0],futuros[1]]).sort_index()
+dolar = pd.concat([futuros[1],futuros[2]]).sort_index()
 
 for i in range(2,len(tickets)):
     dolar = pd.concat([dolar,futuros[i]]).sort_index()
@@ -66,13 +66,13 @@ for i in range(2,len(tickets)):
 spot = reservas
 
 #spot.index = indice
-spot = spot.loc[f'{dolar.index[0]}':].dropna()
+spot = spot.loc[f'{dolar.index[0]}'[:10]:].dropna()
 
 dolar = pd.concat([spot,dolar]).sort_index()
 dolar['Spot'] = dolar['Spot'].fillna(method='bfill').fillna(method='ffill')
 dolar[dolar.columns[1:-10]] = dolar[dolar.columns[1:-10]].fillna(method='bfill')
 dolar.iloc[:,-10:] = dolar.iloc[:,-10:].fillna(method='ffill')
-cable = pd.read_excel(f'Central Bank Report {today}.xlsx')
+cable = pd.read_excel('Central-Bank-Report.xlsx')
 cable.index = cable['Unnamed: 0'].to_list()
 cable = cable.loc[f'{dolar.index[0]}':]
 
@@ -102,6 +102,10 @@ plt.xticks(size=50)
 plt.yticks(size=60)
 plt.savefig('fxspotsnfutures.png',bbox_inches='tight')
 # return
+dolar = dolar.resample('1d').mean()
+dolar = dolar.fillna(method='ffill')
+dolar = dolar.fillna(method='bfill')
+
 cierre = dolar.pct_change().cumsum().fillna(method='ffill').copy() * 100.0
 columnas = []
 
@@ -110,11 +114,12 @@ for i in range(len(cierre.columns)):
 
 cierre.columns = columnas
 
-
 cierre.columns = columnas
 cierre.index = [str(i)[:10] for i in cierre.index.to_list()]
 
 # cierre
+cierre = (np.log(dolar) - np.log(dolar.shift(1))).cumsum().fillna(method='ffill').copy() * 100.0
+
 fig = plt.figure(figsize=(40,25))
 ax1 = fig.add_subplot(111)
 cierre.iloc[:,:2].plot(ax=ax1, lw=7., color='k')
@@ -126,10 +131,22 @@ plt.xticks(size=50)
 plt.yticks(size=60)
 plt.savefig('fxreturns.png',bbox_inches='tight')
 
+fig = plt.figure(figsize=(40,25))
+ax1 = fig.add_subplot(111)
+cierre.iloc[:,:2].plot(ax=ax1, lw=7., color='k')
+cierre.iloc[:,2:].plot(ax=ax1, lw=7.)
+ax1.set_title('Log-Return of Spot & Futures', fontsize=150, fontweight='bold')
+ax1.grid(True,color='k',linestyle='-.',linewidth=2)
+ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=40)
+plt.xticks(size=50)
+plt.yticks(size=60)
+plt.savefig('fxlogreturns.png',bbox_inches='tight')
+
+
 # remaining days to calculate implied rate
 caduca = []#.strftime('%Y-%m-%d')]
 for i in range(22):
-    caduca.append((pd.date_range((dt.date.today()-dt.timedelta(365)).strftime('%Y-%m-%d'),periods=22,freq='BM')[i]))
+    caduca.append((pd.date_range((dt.date.today()-dt.timedelta(365)).strftime('%Y-%m-%d'),periods=22,freq='WOM-3FRI')[i]))
 
 vida = pd.DataFrame(0,columns=caduca,index=cierre.index)
 vida.index = [pd.Timestamp(i) for i in vida.index.to_list()]
@@ -142,6 +159,25 @@ for i in range(len(tasa_implicita.columns)):
     tasa_implicita[f'{tasa_implicita.columns[i]}'] =  (tasa_implicita[f'{tasa_implicita.columns[i]}'] * (365 / ((vida.columns[i] - vida.index).days).values)).values
 
 tasa_implicita = tasa_implicita.sort_index(axis=0,ascending=True)
+tasa_implicita = tasa_implicita.fillna(method='ffill')
+tasa_implicita *= 100.0 
+tasa_implicita[tasa_implicita>1500]= None
+tasa_implicita[tasa_implicita<50]= None
+
+values = tasa_implicita.fillna(method='ffill').tail(1).iloc[0].to_list()
+values = [str(round(i,2)) + '%' for i in values]
+futures = tasa_implicita.fillna(method='ffill').tail(1).T.index.to_list()
+futures = [futures[i] + ' ' + values[i] for i in range(len(futures))]
+
+fig = plt.figure(figsize=(40,25))
+ax1 = fig.add_subplot(111)
+tasa_implicita.plot(ax=ax1, lw=6.)
+ax1.set_title('Implied Rate', fontsize=150, fontweight='bold')
+ax1.grid(True,color='k',linestyle='-.',linewidth=2)
+ax1.legend(futures,loc='center left', bbox_to_anchor=(1, 0.5),fontsize=40)
+plt.xticks(size=50)
+plt.yticks(size=60)
+plt.savefig('fxrateImpl.png',bbox_inches='tight')
 
 tea = pd.DataFrame(0,columns=dolar.columns[2:],index=vida.index)
 
@@ -156,8 +192,9 @@ tea.columns = columnas
 
 tea = tea.sort_index(axis=0,ascending=True)
 tea[tea<0]= None
+tea[tea>10]= None
 fig = plt.figure(figsize=(40,25))
-ax1 = fig.add_subplot(111)
+# ax1 = fig.add_subplot(111)
 tea.plot(ax=ax1, lw=4.)
 ax1.set_title('Effective Annual Rate', fontsize=150, fontweight='bold')
 ax1.grid(True,color='k',linestyle='-.',linewidth=2)
@@ -184,30 +221,6 @@ plt.xticks(size=50)
 plt.yticks(size=60)
 plt.savefig('fxtna30.png',bbox_inches='tight')
 
-
-
-tasa = tasa_implicita.copy() * 100.0
-columnas = []
-for i in range(len(tasa.columns)):
-    if i < 12:
-        columnas.append(str(tasa.columns[i]))
-    else:
-        columnas.append(str(tasa.columns[i]) + ' ' + str(round(tasa.iloc[-1,i],2)) + '%')
-
-
-tasa.columns = columnas
-tasa[tasa<0] = None
-# cierre
-fig = plt.figure(figsize=(40,25))
-ax1 = fig.add_subplot(111)
-tasa.iloc[:,0].plot(ax=ax1, lw=7., color='k')
-tasa.iloc[:,1:].plot(ax=ax1, lw=5.)
-ax1.set_title('Implied Rate', fontsize=150, fontweight='bold')
-ax1.grid(True,color='k',linestyle='-.',linewidth=2)
-ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=40)
-plt.xticks(size=50)
-plt.yticks(size=60)
-plt.savefig('fxrateImpl.png',bbox_inches='tight')
 
 monthly = dt.date.today() - dt.timedelta(30)
 monthly5 = dt.date.today() - dt.timedelta(25)

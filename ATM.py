@@ -34,7 +34,8 @@ def portfolio_name():
     client = (list(filter(lambda x: (name in x),database)))
     client = pd.DataFrame(client, columns=[f'{name} Portfolios'],index=range(len(client)))
     print(client)
-    order = input("\nType [N]umber for a portfolio, else to do something else \n\n")
+    order_retrieve = input("\nType [N]umber for a portfolio, else to do something else \n\n")
+    order = int(order_retrieve)
     try:
         order = int(order)
         data = pd.read_excel(client[f'{name} Portfolios'][order])

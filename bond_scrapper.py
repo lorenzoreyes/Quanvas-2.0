@@ -3,7 +3,11 @@ import pandas as pd, datetime as dt
 from bs4 import BeautifulSoup
 
 pd.options.display.float_format = '{:,.2f}'.format
-
+'''
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+'''
 year = dt.date.today().year 
 
 #url = input('Provide web-page link to perform scrapping\n\n\t\t')
@@ -26,19 +30,28 @@ bonds['Vence'] = [int('20' + i) if len (i) > 1 else year for i in bonds.Vence.to
 for i in range(1,len(bonds.columns)-1):
     bonds[f'{bonds.columns[i]}'] = [float(j.replace('.','').replace(',','.').replace('-','0')) for j in bonds[f'{bonds.columns[i]}'].to_list()]
     # remove null activity
-    #bonds = bonds[bonds[f'{bonds.columns[i]}'] !=0]
+    bonds = bonds[bonds[f'{bonds.columns[i]}'] !=0]
     
 bonds['Spread'] = ((bonds['Venta'] - bonds['Compra']) / bonds['Venta']) * 100.0
-#re.findall(r'\d+',bonds.Especie.to_list()[0])
-#[re.findall(r'\d+',i) for i in bonds.Especie.to_list()]
 # columnas especie, vence, spread [venta-compra/venta] precio, spread, vol, liquidez
 dollars = list(filter(lambda x: 'D' in x[-1], bonds.Especie.to_list()))
+pesos = [i[:-1] for i in dollars]
 
-#z = y[~(y.symbol.str.contains('BULL')) & ~(y.symbol.str.contains('BEAR'))]
-#    z = z[z.symbol.apply(lambda x: ('USDT' in x[-4:]))]
-#titles = list(set([i[:4] for i in debt.Especie.to_list()]))
-#''.join([i for i in debt.Especie.to_list()if not i.isdigit()])
+bonad = bonds[bonds['Especie'].isin(dollars)]
+bonap = bonds[bonds['Especie'].isin(pesos)]
+bonad = bonds[bonds['Especie'].isin([i+'D' for i in bonap['Especie'].to_list()])]
+bonap = bonap[["Especie","Último"]]
+bonap.columns = ['Bono P','Precio P']
+bonap['Bono D'] = bonad['Especie'].to_list()
+bonap['Precio D'] = bonad['Último'].to_list()
+bonap['Precio D'] /= 100
+bonap['MEP'] = bonap['Precio P'] / bonap['Precio D']
+bonap = bonap[~((bonap.T == 0.00).any())]
+
 titles = sorted(list(set([re.split(r'(\d+)', i)[0] for i in bonds.Especie.to_list()])))
+bonds.index = range(len(bonds))
 
 bonds.to_csv('bondsarg.csv')
-print(bonds)
+
+
+print('\n\n',bonap)

@@ -21,7 +21,7 @@ bonds = bonds[['Especie','Último','Volumen','Monto']]
 bonds.columns = ['Especie','Precio','Volumen','Monto']
 bonds = bonds[~(bonds.Especie.apply(lambda x: ('Y' in x[-1])))]
 # descarto empieza en B, CO, PBA, PMM, TO, TVPP y termina en D
-discard = ['B', 'CO','CE','GE', 'N','PB', 'PM', 'TB','TC','TD', 'TO','T2','TV','R','S','Y']
+discard = ['B', 'CE','GE', 'N','PB', 'PM', 'TB','TC','TD', 'TO','T2','TV','TX','R','S','Y']
 for i in range(len(discard)):
     bonds = bonds[~(bonds.Especie.str.startswith(f'{discard[i]}'))]
 
@@ -47,13 +47,13 @@ bonds['Precio'] = ultimo
 
 # arreglo decimales
 
-cer = ['TX']#,'PR13','DICP','PARP','CUAP']
-ceres = [' '.join(str(j) for j in [bonds[bonds.Especie.str.startswith(i)].Especie.to_list() for i in cer])]
-ceres = [i.replace('[','').replace(']',',').replace(' ','').replace("'","") for i in ceres][0][:-1].split(',')
+#cer = ['TX']#,'PR13','DICP','PARP','CUAP']
+#ceres = [' '.join(str(j) for j in [bonds[bonds.Especie.str.startswith(i)].Especie.to_list() for i in cer])]
+#ceres = [i.replace('[','').replace(']',',').replace(' ','').replace("'","") for i in ceres][0][:-1].split(',')
 
-cer = bonds[bonds.Especie.isin(ceres)]
-cer = cer[~(cer.Especie.apply(lambda x: ('D' in x[-1])))]
-ceres = cer.Especie.to_list()
+#cer = bonds[bonds.Especie.isin(ceres)]
+#cer = cer[~(cer.Especie.apply(lambda x: ('D' in x[-1])))]
+#ceres = cer.Especie.to_list()
 
 dollar = ['AL','AE','GD']
 dollars = [' '.join(str(j) for j in [bonds[bonds.Especie.str.startswith(i)].Especie.to_list() for i in dollar])]
@@ -61,7 +61,9 @@ dollars = [i.replace('[','').replace(']',',').replace(' ','').replace("'","") fo
 
 dollar = bonds[bonds.Especie.isin(dollars)]
 
-download = sorted(cer.Especie.to_list() + dollar.Especie.to_list())
+#download = sorted(cer.Especie.to_list() + dollar.Especie.to_list())
+download = sorted(dollar.Especie.to_list())
+
 chrome_options = Options()
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_argument("--disable-gpu")
@@ -155,7 +157,7 @@ plt.xticks(size=30, rotation=45)
 plt.yticks(size=40, rotation=45)
 plt.savefig('cableBonos.png',bbox_inches='tight')
 
-
+'''
 titulos, ceres = cer.Especie.to_list().copy(),cer.Especie.to_list().copy()
 
 infla = pd.read_csv(titulos[0]+' - Cotizaciones historicas.csv')
@@ -184,7 +186,6 @@ ax1.legend(columnas,loc='best', bbox_to_anchor=(1, 0.5),fontsize=20)
 plt.xticks(size=30, rotation=45)
 plt.yticks(size=40, rotation=45)
 plt.savefig('bonosCER.png',bbox_inches='tight')
-
 
 # flujos y calculo de duration y mod-d
 # valoractual, face: valor tecnico + 2 cupones de un año, ytm cupon 2 pagos/ valor mercado, freq cant pagos año
@@ -226,10 +227,10 @@ plt.plot(duration.Bono,duration.Duration, '-o',linewidth=9)
 plt.xticks(size=90, rotation=45)
 plt.yticks(size=60, rotation=45)
 plt.savefig("Duration.png",dpi=300)
-
+'''
 writer = pd.ExcelWriter('bonargs.xlsx',engine='xlsxwriter')
 curva_dolares.to_excel(writer,sheet_name='Bonos Dollar')
 curva_pesos.to_excel(writer,sheet_name='Bonos Pesificados')
 cable.fillna(method='bfill').to_excel(writer,sheet_name='cable bonos')
-infla.to_excel(writer,sheet_name='Bonos CER')
+#infla.to_excel(writer,sheet_name='Bonos CER')
 writer.close()

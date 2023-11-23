@@ -4,7 +4,7 @@ of Quanvas as they are requested by the user
 '''
 from packages import *
 
-points = ["argentinafx","bonds","ATM","micro","macro","todo_maintenance",\
+points = ["argentinafx","rava_bonds","rava_scrap","ATM","micro","macro","todo_maintenance",\
           "perform_maintenance","update","owly","bienvenido","welcome","resume"]
 
 endpoints = {k: v for k, v in enumerate(points)}
