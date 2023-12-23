@@ -118,8 +118,6 @@ cierre.columns = columnas
 cierre.index = [str(i)[:10] for i in cierre.index.to_list()]
 
 # cierre
-cierre = (np.log(dolar) - np.log(dolar.shift(1))).cumsum().fillna(method='ffill').copy() * 100.0
-
 fig = plt.figure(figsize=(40,25))
 ax1 = fig.add_subplot(111)
 cierre.iloc[:,:2].plot(ax=ax1, lw=7., color='k')
@@ -130,18 +128,6 @@ ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=40)
 plt.xticks(size=50)
 plt.yticks(size=60)
 plt.savefig('fxreturns.png',bbox_inches='tight')
-
-fig = plt.figure(figsize=(40,25))
-ax1 = fig.add_subplot(111)
-cierre.iloc[:,:2].plot(ax=ax1, lw=7., color='k')
-cierre.iloc[:,2:].plot(ax=ax1, lw=7.)
-ax1.set_title('Log-Return of Spot & Futures', fontsize=150, fontweight='bold')
-ax1.grid(True,color='k',linestyle='-.',linewidth=2)
-ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=40)
-plt.xticks(size=50)
-plt.yticks(size=60)
-plt.savefig('fxlogreturns.png',bbox_inches='tight')
-
 
 # remaining days to calculate implied rate
 caduca = []#.strftime('%Y-%m-%d')]
